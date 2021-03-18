@@ -1,6 +1,11 @@
 # FlappyBird
 FlappyBird Game 2 Versions - User and Computer
 
+Built 2 versions of the Flappy-Bird game using Python module 'pygame':
+ 1. In which the player is a human user.
+ 2. In which the player is the computer. In this version, the computer aims to win by learning the game. 
+ Implemented Machine-Learning with Python module 'NEAT'.
+
 
 Built 2 versions of the Flappy-Bird game using Python module 'pygame':
 
