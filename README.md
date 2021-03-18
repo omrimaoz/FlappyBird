@@ -11,6 +11,6 @@ Built 2 versions of the Flappy-Bird game using Python module 'pygame':
 
 Project based on the original game - FlappyBird
 
-I was guided by a few FlappyBird youtube videos. I learn about the Pygame library: function, code structure, and concepts, etc.
+I was guided by a few FlappyBird youtube videos. I learn about the Pygame library: function, code structure, concepts, etc.
 
 Adjust and combine 2 versions of the game.
