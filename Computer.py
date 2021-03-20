@@ -87,7 +87,8 @@ class Bird:
             self.img = self.IMGS[0]
             self.img_count = 0
 
-        if self.tilt <= -80:  # When free fall dont flap wings
+        # When free fall dont flap wings
+        if self.tilt <= -80:
             self.img = self.IMGS[1]
             self.img_count = self.ANIMATION_TIME * 2
 
@@ -95,6 +96,7 @@ class Bird:
         new_rect = rotated_image.get_rect(center=self.img.get_rect(topleft=(self.x, self.y)).center)
         win.blit(rotated_image, new_rect.topleft)  # Present details to screen
 
+    # Return rectangle area around bird object
     def get_mask(self):
         return pygame.mask.from_surface(self.img)
 
@@ -226,13 +228,21 @@ def draw_window(win, birds, pipes, base, score, gen, size):
     pygame.display.update()
 
 
+# Main function to integrate game variables and methods
 def main(genomes, config):
-    print(type(genomes[0]))
+    # AI algorithm and game support variable
     global GEN
-    GEN += 1
+    GEN += 1  # Generation counter
     nets = []
-    ge = []
-    birds = []
+    ge = []  # Generation list
+    birds = []  # Birds list
+    base = Base(570)  # Define base object
+    pipes = [Pipe(500, 0, 0)]  # Define first pipe object (in a list of pipes)
+    win = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
+    clock = pygame.time.Clock()
+    score = 0
+
+    # initialize first bird and fitness properties
     for _, g in genomes:  # Genomes is a list of tuples so we need only the second value in the tuples
         net = neat.nn.FeedForwardNetwork.create(g, config)
         nets.append(net)
@@ -240,15 +250,11 @@ def main(genomes, config):
         g.fitness = 0
         ge.append(g)
 
-    base = Base(570)  # Define base object
-    pipes = [Pipe(500, 0, 0)]  # Define first pipe object (in a list of pipes)
-    win = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
-    clock = pygame.time.Clock()
-    score = 0
-
+    # Game loop
     run = True
-    while run:  # Game loop
+    while run:
         clock.tick(90)
+
         # Define x to close game and game window
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -256,19 +262,20 @@ def main(genomes, config):
                 pygame.quit()
                 quit()
 
-        pipe_ind = 0
+        pipe_ind = 0  #
         if len(birds) > 0:
             if len(pipes) > 1 and birds[0].x > pipes[0].x + pipes[0].PIPE_TOP.get_width():
                 pipe_ind = 1
         else:
             run = False
             break
+
         # On each bird of the population define:
         for x, bird in enumerate(birds):
             bird.move()  # Update bird location
             ge[x].fitness += 0.1  # Fit the bird object
 
-            # Cauculate when to jump
+            # Calculate when to jump
             output = nets[x].activate(
                 (bird.y, abs(bird.y - pipes[pipe_ind].height), abs(bird.y - pipes[pipe_ind].bottom)))
             if output[0] > 0.5:
@@ -305,6 +312,7 @@ def main(genomes, config):
             pipes.append(Pipe(500, pipes[-1].height, score))
         for r in rem:
             pipes.remove(r)
+
         # Bird collide with sky or surface (reminder - sky = 0)
         for x, bird in enumerate(birds):
             if bird.y + bird.img.get_height() >= 570 or bird.y < 0:
@@ -312,6 +320,7 @@ def main(genomes, config):
                 nets.pop(x)
                 ge.pop(x)
 
+        # Game window update
         base.move()
         draw_window(win, birds, pipes, base, score, GEN, len(birds))
 
@@ -330,6 +339,7 @@ def run(config_path):
     winner = p.run(main, 50)
 
 
+# On running this module:
 if __name__ == "__main__":
     local_dir = os.path.dirname(__file__)
     config_path = os.path.join(local_dir, "config-feedforward.txt")

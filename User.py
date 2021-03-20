@@ -102,7 +102,7 @@ def draw_pipes(pipes):
             screen.blit(flip_pipe, pipe)
 
 
-# Define and Check collision
+# Define and check collision
 def check_collision(pipes):
     for pipe in pipes:
         if bird_rect.colliderect(pipe):
@@ -152,9 +152,10 @@ def update_score(curr_score, curr_high_score):
     return new_high_score
 
 
-while True:  # Game loop
-    # Define x as game quit and close game window
-    for event in pygame.event.get():
+# Game loop
+while True:
+    for event in pygame.event.get():  # on User event
+        # Define x as game quit and close game window
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
@@ -182,9 +183,11 @@ while True:  # Game loop
                 bird_index = 0
             bird_surface, bird_rect = bird_animation()
 
+    # Present background image to game window
     screen.blit(bg_surface, (0, 0))
 
-    if game_active:
+    # Game variables and properties while playing the game
+    if game_active: #Changes when losing the game
         # Bird movement update
         bird_movement += gravity
         rotated_bird = rotate_bird(bird_surface)
@@ -202,7 +205,7 @@ while True:  # Game loop
                 pipe_index += 2
                 score_sound.play()
         score_display('main_game')
-    else:
+    else: # Game variables and properties after losing the game
         screen.blit(game_over_surface, game_over_rect)
         high_score = update_score(score, high_score)
         score_display('game_over')
@@ -216,4 +219,3 @@ while True:  # Game loop
     # Game window update
     pygame.display.update()
     clock.tick(120)
-
